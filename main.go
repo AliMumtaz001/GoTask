@@ -21,6 +21,8 @@ func main() {
 	fmt.Println("Total Digits are", DigitCount(str))
 	fmt.Println("Total Characters are", len(str))
 	fmt.Println("Total Paragraphs are", ParaCount(str))
+	fmt.Println("Total Special Characters are", SpecialCount(str))
+	fmt.Println("Total Consinent are", ConsinentCount(str))
 
 }
 
@@ -47,7 +49,7 @@ func SpaceCount(s string) any {
 func LineCount(s string) any {
 	word := 0
 	for i := 0; i < len(s); i++ {
-		if s[i] == '\n' {
+		if s[i] == '.' {
 			word += 1
 		}
 	}
@@ -57,10 +59,26 @@ func LineCount(s string) any {
 func ParaCount(s string) any {
 	word := 0
 	for i := 0; i < len(s); i++ {
-		if s[i] == '.' {
-			if  s[i] == '\n' {
-			word += 1
+		if  s[i] == '\n'{ 
+				word += 1
 		}
+	}
+	return word + 1
+
+}
+func ConsinentCount(s string) any {
+	word := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == 'b' || s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'g' ||
+			s[i] == 'h' || s[i] == 'j' || s[i] == 'k' || s[i] == 'l' || s[i] == 'm' ||
+			s[i] == 'n' || s[i] == 'p' || s[i] == 'q' || s[i] == 'r' || s[i] == 's' ||
+			s[i] == 't' || s[i] == 'v' || s[i] == 'w' || s[i] == 'x' || s[i] == 'y' ||
+			s[i] == 'z' || s[i] == 'B' || s[i] == 'C' || s[i] == 'D' || s[i] == 'F' || s[i] == 'G' ||
+			s[i] == 'H' || s[i] == 'J' || s[i] == 'K' || s[i] == 'L' || s[i] == 'M' ||
+			s[i] == 'N' || s[i] == 'P' || s[i] == 'Q' || s[i] == 'R' || s[i] == 'S' ||
+			s[i] == 'T' || s[i] == 'V' || s[i] == 'W' || s[i] == 'X' || s[i] == 'Y' ||
+			s[i] == 'Z' {
+				word++
 		}
 	}
 	return word + 1
@@ -70,7 +88,7 @@ func ParaCount(s string) any {
 func PuncCount(s string) any {
 	word := 0
 	for i := 0; i < len(s); i++ {
-		if s[i] == '.' || s[i] == ',' || s[i] == '(' || s[i] == ')' || s[i] == ';' || s[i] == '!' || s[i] == '?' || s[i] == '\'' || s[i] == '%' || s[i] == '@'{
+		if   s[i] == '!' || s[i] == '?' || s[i] == '\'' {
 			word += 1
 		}
 	}
@@ -78,10 +96,26 @@ func PuncCount(s string) any {
 
 }
 
+func SpecialCount(s string) any {
+	word := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == '%' || s[i] == '@' || s[i] == '#' || s[i] == '$' || s[i] == '^' || s[i] == '&' || s[i] == '*' || s[i] == '(' || s[i] == ')' ||
+		 s[i] == '_' || s[i] == '+' || s[i] == '-' || s[i] == '=' || s[i] == '{' || s[i] == '}'|| 
+		 s[i] == '[' || s[i] == ']' || s[i] == '|' || s[i] == '\\' || s[i] == ':' || s[i] == ';' ||
+		 s[i] == '"' || s[i] == '\'' || s[i] == '<' || s[i] == '>' || s[i] == ',' || s[i] == '.' ||
+		 s[i] == '?' || s[i] == '/' || s[i] == '~' || s[i] == '`'  {
+			word += 1
+		}
+	} //# $ % ^ & * ( ) _ + - = { } [ ] | \ : ; " ' < > , . ? / ~ `
+	return word + 1
+
+}
+
 func VowelCount(s string) any {
 	word := 0
 	for i := 0; i < len(s); i++ {
-		if s[i] == 'a' || s[i] == 'e' || s[i] == 'i' || s[i] == 'o' || s[i] == 'u' {
+		if s[i] == 'a' || s[i] == 'e' || s[i] == 'i' || s[i] == 'o' || s[i] == 'u' ||
+		 s[i] == 'A' || s[i] == 'E' || s[i] == 'I' || s[i] == 'O' || s[i] == 'U' {
 			word += 1
 		}
 	}
