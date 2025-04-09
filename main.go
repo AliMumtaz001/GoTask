@@ -198,8 +198,7 @@ func main() {
 	str := string(content) //coonvert it into string
 
 	length := len(str)
-	// fmt.Println(length)
-	// chunks := length / 4   //10636007
+
 	chunks := [5]int{}
 	for i := 0; i < 5; i++ {
 		if i == 0 {
@@ -211,24 +210,29 @@ func main() {
 		}
 	}
 	fmt.Println(chunks)
-	// b := chunks[0]
-	// b2 := chunks[1]
-	// b3 := chunks[2]
-	// b4 := chunks[3]
-	// chunking(str,0,b)
-	// chunking(str,b,b2)
-	// chunking(str,b2,b3)
-	// chunking(str,b3,b4)
-	// fmt.Println("Total Characters:  ", len(str))
-	// fmt.Println("Total Words", WordCount(str))
-	// fmt.Println("Total Lines", LineCount(str))
-	// fmt.Println("Total Paragraphs are", ParaCount(str))
-	// fmt.Println("Total Consinent are", ConsinentCount(str))
-	// fmt.Println("Total Vowels are", VowelCount(str))
-	// fmt.Println("Total Space are", SpaceCount(str))
-	// fmt.Println("Total Digits are", DigitCount(str))
-	// fmt.Println("Total Punctuation", PuncCount(str))
-	// fmt.Println("Total Special Characters are", SpaceCount(str))
+
+	b := chunks[0]
+	b2 := chunks[1]
+	b3 := chunks[2]
+	b4 := chunks[3]
+	fmt.Println(".......Chunking......")
+	chunking(str,0,b)
+	chunking(str,b,b2)
+	chunking(str,b2,b3)
+	chunking(str,b3,b4)
+
+
+	fmt.Println("\n.......Separate functions......")
+	fmt.Println("Total Characters:  ", len(str))
+	fmt.Println("Total Words", WordCount(str))
+	fmt.Println("Total Lines", LineCount(str))
+	fmt.Println("Total Paragraphs are", ParaCount(str))
+	fmt.Println("Total Consinent are", ConsinentCount(str))
+	fmt.Println("Total Vowels are", VowelCount(str))
+	fmt.Println("Total Space are", SpaceCount(str))
+	fmt.Println("Total Digits are", DigitCount(str))
+	fmt.Println("Total Punctuation", PuncCount(str))
+	fmt.Println("Total Special Characters are", SpaceCount(str))
 	// elapse := time.Since(start)
 	// fmt.Printf("page took %s \n", elapse)
 
@@ -285,6 +289,7 @@ func chunking(s string, start int, end int) multiples {
 		}
 	}
 	// fmt.Println("Total Characters:  ", len(str))
+	
 	fmt.Println("Total Words", m.word)
 	fmt.Println("Total Lines", m.line)
 	fmt.Println("Total Paragraphs are", m.paragraph)
