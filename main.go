@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 type multiples struct {
@@ -187,10 +188,10 @@ func DigitCount(s string) int {
 }
 
 func main() {
-	// start := time.Now() //for executionn time
+	start := time.Now() //for executionn time
 
 	content, error := os.ReadFile("Testfile.txt") // to Read file
-	if error != nil {                          // if err then log
+	if error != nil {                             // if err then log
 		log.Fatal(error)
 	}
 
@@ -200,17 +201,24 @@ func main() {
 	// fmt.Println(length)
 	// chunks := length / 4   //10636007
 	chunks := [5]int{}
-	for i:=0;i<5;i++  {
+	for i := 0; i < 5; i++ {
 		if i == 0 {
 
-			chunks[i] = length /5
+			chunks[i] = length / 5
 			fmt.Println(length)
 		} else {
-			chunks[i] = chunks[i-1]+chunks[0]
+			chunks[i] = chunks[i-1] + chunks[0]
 		}
 	}
 	fmt.Println(chunks)
-	
+	// b := chunks[0]
+	// b2 := chunks[1]
+	// b3 := chunks[2]
+	// b4 := chunks[3]
+	// chunking(str,0,b)
+	// chunking(str,b,b2)
+	// chunking(str,b2,b3)
+	// chunking(str,b3,b4)
 	// fmt.Println("Total Characters:  ", len(str))
 	// fmt.Println("Total Words", WordCount(str))
 	// fmt.Println("Total Lines", LineCount(str))
@@ -224,17 +232,16 @@ func main() {
 	// elapse := time.Since(start)
 	// fmt.Printf("page took %s \n", elapse)
 
-	
-	// 	fmt.Println("Total Characters:  ", len(str))
-	// 	fmt.Println("Total Characters:  ", combinefunc(str))
-	// 	elapse := time.Since(start)
-	// 	fmt.Printf("page took %s \n", elapse)
+	fmt.Println("Total Characters:  ", len(str))
+	fmt.Println("Total Characters:  ", combinefunc(str))
+	elapse := time.Since(start)
+	fmt.Printf("page took %s \n", elapse)
 	// }
 
 }
-func chunking(str string, chunks int) multiples {
+func chunking(s string, start int, end int) multiples {
 	m := multiples{}
-	for i := 0; i < chunks; i++ {
+	for i := start; i < end; i++ {
 		if s[i] == ' ' || s[i] == '\n' {
 			m.word++
 		}
