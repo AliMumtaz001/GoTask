@@ -1,5 +1,4 @@
 package Analyse
-package main
 import (
 	// "fmt"
 	"io/ioutil"
