@@ -5,9 +5,10 @@ import (
 	"sync"
 )
 
-func Chunking(s string, start int, end int, wg *sync.WaitGroup) Multiples {
+func Chunking(s string, start int, end int, wg *sync.WaitGroup, ch chan<- Multiples) {
+	defer wg.Done()
 	m := Multiples{}
-	for i := start; i < end; i++ {
+	for i := start; i < end && i < len(s); i++ {
 		if s[i] == '\n' || (s[i] == '.' && i+1 < len(s) && s[i+1] == '\n') {
 			m.Paragraph++
 		}
@@ -45,7 +46,6 @@ func Chunking(s string, start int, end int, wg *sync.WaitGroup) Multiples {
 		}
 	}
 	fmt.Println("..................Chunking..................\n")
-
 	fmt.Println("Total Words", m.Word)
 	fmt.Println("Total Lines", m.Line)
 	fmt.Println("Total Paragraphs are", m.Paragraph)
@@ -55,5 +55,5 @@ func Chunking(s string, start int, end int, wg *sync.WaitGroup) Multiples {
 	fmt.Println("Total Digits are", m.Digit)
 	fmt.Println("Total Punctuation", m.Punctuation)
 	fmt.Println("Total Special Characters are", m.Special)
-	return m
+	ch <- m // Send result to channel
 }
