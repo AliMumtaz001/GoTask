@@ -18,7 +18,7 @@ func main() {
 }
 
 func getData(c *gin.Context) {
-	result, err := utils.Analyzer("Test1.txt")
+	result, err := utils.Analyzer("Test.txt")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "Failed to read file"})
 		return
