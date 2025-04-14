@@ -1,4 +1,4 @@
-package Utils
+package utils
 
 // function for Words count
 func WordCount(s string) int {

@@ -1,4 +1,4 @@
-package Utils
+package utils
 
 type Multiples struct {
 	Word        int

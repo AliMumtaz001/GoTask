@@ -1,12 +1,13 @@
-package Utils
+package utils
 
 import (
 	"fmt"
+	"os"
 	"sync"
 )
 
-func Chunking(s string, start int, end int, wg *sync.WaitGroup, ch chan<- Multiples) {
-	defer wg.Done()
+func Chunking(s string, start int, end int) Multiples {
+	
 	m := Multiples{}
 	for i := start; i < end && i < len(s); i++ {
 		if s[i] == '\n' || (s[i] == '.' && i+1 < len(s) && s[i+1] == '\n') {
@@ -45,15 +46,61 @@ func Chunking(s string, start int, end int, wg *sync.WaitGroup, ch chan<- Multip
 			m.Digit += 1
 		}
 	}
-	fmt.Println("..................Chunking..................\n")
-	fmt.Println("Total Words", m.Word)
-	fmt.Println("Total Lines", m.Line)
-	fmt.Println("Total Paragraphs are", m.Paragraph)
-	fmt.Println("Total Consinent are", m.Consient)
-	fmt.Println("Total Vowels are", m.Vowel)
-	fmt.Println("Total Space are", m.Space)
-	fmt.Println("Total Digits are", m.Digit)
-	fmt.Println("Total Punctuation", m.Punctuation)
-	fmt.Println("Total Special Characters are", m.Special)
-	ch <- m // Send result to channel
+	
+	return m // Send result to channel
+}
+
+func Analyzer(filepath string) (string, error) {
+	data, err := os.ReadFile(filepath)
+	if err != nil {
+		return "", err
+	}
+
+	str := string(data)
+	length := len(str)
+
+	chunks := [5]int{}
+	chunkSize := length / 5
+	for i := 0; i < 5; i++ {
+		if i == 0 {
+			chunks[i] = chunkSize
+		} else {
+			chunks[i] = chunks[i-1] + chunkSize
+		}
+	}
+	chunks[4] = length
+
+	var wg sync.WaitGroup
+	ch := make(chan Multiples, 5)
+
+	for i := 0; i < len(chunks)-1; i++ {
+		wg.Add(1)
+		
+		go func(start, end int) {
+			defer wg.Done()
+			result := Chunking(str, start, end)
+			ch <- result
+		}(chunks[i], chunks[i+1])
+	}
+
+	wg.Wait()
+	close(ch)
+
+	var finalResult Multiples
+for part := range ch {
+    finalResult.Word += part.Word
+    finalResult.Line += part.Line
+    finalResult.Paragraph += part.Paragraph
+    finalResult.Consient += part.Consient
+    finalResult.Vowel += part.Vowel
+    finalResult.Space += part.Space
+    finalResult.Digit += part.Digit
+    finalResult.Punctuation += part.Punctuation
+    finalResult.Special += part.Special
+}
+resultString := fmt.Sprintf("Words: %d, Lines: %d, Paragraphs: %d, Consonants: %d, Vowels: %d, Spaces: %d, Digits: %d, Punctuation: %d, Special: %d",
+    finalResult.Word, finalResult.Line, finalResult.Paragraph, finalResult.Consient, finalResult.Vowel,
+    finalResult.Space, finalResult.Digit, finalResult.Punctuation, finalResult.Special)
+
+return resultString, nil
 }

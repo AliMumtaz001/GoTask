@@ -1,4 +1,4 @@
-package Utils
+package utils
 
 func CombineFunc(s string) Multiples {
 	m := Multiples{}
