@@ -12,9 +12,9 @@ import (
 )
 
 type JwtWrap struct {
-	SecretKey       string
-	Issued          string
-	ExpirationHours int64
+	SecretKey       string	//secret key to sign token .
+	Issued          string	
+	ExpirationHours int64	//jhow much time token valid
 }
 
 type JwtClaim struct {
@@ -22,15 +22,15 @@ type JwtClaim struct {
 	StandardClaims jwt.StandardClaims
 }
 
-// Valid implements jwt.Claims.
+
 func (j *JwtClaim) Valid() error {
-	// Since StandardClaims already implements Valid(), you can delegate to it
+
 	if err := j.StandardClaims.Valid(); err != nil {
 		return err
 	}
 	return nil
 }
-
+//a tokenn is generated from the email.the token is signed using a secret key the token also has an expiry time set.
 func (j *JwtWrap) GenerateToken(email string) (string, error) {
 	claims := &JwtClaim{
 		Email: email,
@@ -104,27 +104,27 @@ func Auths() gin.HandlerFunc {
 	}
 }
 
-type user struct {
+type users struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-var users map[string]user
+var userss map[string]users
 
 func signup(c *gin.Context) {
-	var u user
+	var u users
 	err := c.BindJSON(&u)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	_, ok := users[u.Email]
+	_, ok := userss[u.Email]
 	if ok {
 		c.JSON(http.StatusConflict, gin.H{"message": "you already created an account"})
 		return
 	}
 
-	users[u.Email] = u
+	userss[u.Email] = u
 
 	jwtWrapper := JwtWrap{
 		SecretKey:       "esfsdfkpskodkf24234243243",
@@ -140,13 +140,13 @@ func signup(c *gin.Context) {
 }
 
 func login(c *gin.Context) {
-	var u user
+	var u users
 	err := c.BindJSON(&u)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	val, ok := users[u.Email]
+	val, ok := userss[u.Email]
 	if !ok {
 		c.JSON(http.StatusConflict, gin.H{"error": true, "message": "Please Sign Up"})
 		return
@@ -165,11 +165,11 @@ func login(c *gin.Context) {
 }
 
 func getData(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"data": users})
+	c.JSON(http.StatusOK, gin.H{"data": userss})
 }
 
 func main() {
-	users = make(map[string]user)
+	userss = make(map[string]users)
 
 	r := gin.Default()
 
