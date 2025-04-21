@@ -1,8 +1,7 @@
-package main
+package authentication
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -12,16 +11,15 @@ import (
 )
 
 type JwtWrap struct {
-	SecretKey       string	//secret key to sign token .
-	Issued          string	
-	ExpirationHours int64	//jhow much time token valid
+	SecretKey       string //secret key to sign token .
+	Issued          string
+	ExpirationHours int64 //jhow much time token valid
 }
 
 type JwtClaim struct {
 	Email          string
 	StandardClaims jwt.StandardClaims
 }
-
 
 func (j *JwtClaim) Valid() error {
 
@@ -30,7 +28,8 @@ func (j *JwtClaim) Valid() error {
 	}
 	return nil
 }
-//a tokenn is generated from the email.the token is signed using a secret key the token also has an expiry time set.
+
+// a tokenn is generated from the email.the token is signed using a secret key the token also has an expiry time set.
 func (j *JwtWrap) GenerateToken(email string) (string, error) {
 	claims := &JwtClaim{
 		Email: email,
@@ -111,72 +110,19 @@ type users struct {
 
 var userss map[string]users
 
-func signup(c *gin.Context) {
-	var u users
-	err := c.BindJSON(&u)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	_, ok := userss[u.Email]
-	if ok {
-		c.JSON(http.StatusConflict, gin.H{"message": "you already created an account"})
-		return
-	}
-
-	userss[u.Email] = u
-
-	jwtWrapper := JwtWrap{
-		SecretKey:       "esfsdfkpskodkf24234243243",
-		Issued:          "admin",
-		ExpirationHours: 12,
-	}
-	signedToken, jwtErr := jwtWrapper.GenerateToken(u.Email)
-	if jwtErr != nil {
-		log.Println(jwtErr)
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"error": false, "message": "Successfully Signed Up", "token": signedToken})
-}
-
-func login(c *gin.Context) {
-	var u users
-	err := c.BindJSON(&u)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	val, ok := userss[u.Email]
-	if !ok {
-		c.JSON(http.StatusConflict, gin.H{"error": true, "message": "Please Sign Up"})
-		return
-	}
-	jwtWrapper := JwtWrap{
-		SecretKey:       "esfsdfkpskodkf24234243243",
-		Issued:          "admin",
-		ExpirationHours: 48,
-	}
-	signedToken, jwtErr := jwtWrapper.GenerateToken(u.Email)
-	if jwtErr != nil {
-		log.Println(jwtErr)
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"error": false, "message": "successfully logged in", "data": val, "token": signedToken})
-}
-
 func getData(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": userss})
 }
 
-func main() {
-	userss = make(map[string]users)
+// func main() {
+// 	userss = make(map[string]users)
 
-	r := gin.Default()
+// 	r := gin.Default()
 
-	r.POST("/login", login)
-	r.POST("/signup", signup)
-	r.Use(Auths())
-	r.GET("/data", getData)
+// 	r.POST("/login", Login)
+// 	r.POST("/signup", Signup)
+// 	r.Use(Auths())
+// 	r.GET("/result", StoreResult)
 
-	r.Run(":9090")
-}
+// 	r.Run(":9090")
+// }
