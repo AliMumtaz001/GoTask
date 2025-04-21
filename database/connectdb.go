@@ -55,6 +55,8 @@ func Connect() *sql.DB {
 
 func CheckError(err error) {
 	if err != nil {
-		panic(err)
+		fmt.Println("Error for result:", err)
+		log.Fatal(err)
+
 	}
 }

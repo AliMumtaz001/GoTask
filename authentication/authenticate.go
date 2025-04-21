@@ -104,6 +104,7 @@ func Auths() gin.HandlerFunc {
 }
 
 type users struct {
+	ID       int    `json:"user_id"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -113,16 +114,3 @@ var userss map[string]users
 func getData(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": userss})
 }
-
-// func main() {
-// 	userss = make(map[string]users)
-
-// 	r := gin.Default()
-
-// 	r.POST("/login", Login)
-// 	r.POST("/signup", Signup)
-// 	r.Use(Auths())
-// 	r.GET("/result", StoreResult)
-
-// 	r.Run(":9090")
-// }
