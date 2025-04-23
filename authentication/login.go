@@ -55,6 +55,7 @@ func Login(c *gin.Context) {
 		Issued:          "admin",
 		ExpirationHours: 48,
 	}
+	
 	signedToken, jwtErr := jwtWrapper.GenerateToken(u.Email)
 	if jwtErr != nil {
 		log.Println("JWT error:", jwtErr)

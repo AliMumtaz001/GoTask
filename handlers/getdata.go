@@ -30,7 +30,6 @@ func getdata(db *sql.DB, userID string, page, pageSize int) (string, int, error)
 	if err != nil {
 		return "", 0, err
 	}
-
 	// Calculate offset for pagination
 	offset := (page - 1) * pageSize
 

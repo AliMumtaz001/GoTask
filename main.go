@@ -32,7 +32,6 @@ import (
 func main() {
 	db := database.Connect()
 	defer db.Close()
-
 	r := gin.Default()
 
 	// Swagger route (no authentication required)
@@ -42,7 +41,7 @@ func main() {
 	r.POST("/login", authentication.Login)
 	r.POST("/signup", authentication.Signup)
 
-	// Protected routes (require authentication)
+	// Protected routes (it need authentication)
 	protected := r.Group("/")
 	protected.Use(authentication.Auths())
 	{
