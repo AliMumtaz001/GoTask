@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/AliMumtaz001/GoTask/authentication"
 	"github.com/AliMumtaz001/GoTask/database"
+	handlers "github.com/AliMumtaz001/GoTask/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,8 +19,8 @@ func main() {
 	r.POST("/signup", authentication.Signup)
 	r.Use(authentication.Auths())
 	r.POST("/result", func(c *gin.Context) { // Use a closure to pass db
-		authentication.Upload(c, db)
+		handlers.Upload(c, db)
 	})
-	r.GET(("/getdata"), authentication.GetResultHandler(db))
+	r.GET(("/getdata"), handlers.GetResultHandler(db))
 	r.Run(":8000")
 }

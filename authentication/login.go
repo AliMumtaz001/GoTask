@@ -17,11 +17,10 @@ func Login(c *gin.Context) {
 	err := json.NewDecoder(c.Request.Body).Decode(&u)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON token"})
-		return 
+		return
 	}
 
-
-	query := `SELECT email, password FROM employeedata WHERE email = $1`
+	query := `SELECT email, password FROM employee WHERE email = $1`
 	err = db.QueryRow(query, u.Email).Scan(&dbemail, &dbpassword)
 
 	if err != nil {
@@ -29,7 +28,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	
 	if dbpassword != u.Password {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
