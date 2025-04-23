@@ -9,6 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Login godoc
+// @Summary      Login user
+// @Description  Authenticate user and return JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        user  body  authentication.users  true  "User Credentials"
+// @Success      200
+// @Failure      401
+// @Router       /login [post]
 func Login(c *gin.Context) {
 	var u users
 	var dbemail, dbpassword string

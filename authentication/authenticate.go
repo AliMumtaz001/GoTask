@@ -1,8 +1,127 @@
+// package authentication
+
+// import (
+// 	"errors"
+// 	"net/http"
+// 	"strings"
+// 	"time"
+
+// 	"github.com/gin-gonic/gin"
+// 	"github.com/golang-jwt/jwt"
+// )
+
+// type JwtWrap struct {
+// 	SecretKey       string //secret key to sign token .
+// 	Issued          string
+// 	ExpirationHours int64 //jhow much time token valid
+// }
+
+// type JwtClaim struct {
+// 	Email          string
+// 	StandardClaims jwt.StandardClaims
+// }
+
+// func (j *JwtClaim) Valid() error {
+
+// 	if err := j.StandardClaims.Valid(); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+// // a tokenn is generated from the email.the token is signed using a secret key the token also has an expiry time set.
+// func (j *JwtWrap) GenerateToken(email string) (string, error) {
+// 	claims := &JwtClaim{
+// 		Email: email,
+// 		StandardClaims: jwt.StandardClaims{
+// 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(j.ExpirationHours)).Unix(),
+// 			Issuer:    j.Issued,
+// 		},
+// 	}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	signedToken, err := token.SignedString([]byte(j.SecretKey))
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return signedToken, nil
+// }
+
+// func (j *JwtWrap) ValidateToken(signedToken string) (*JwtClaim, error) {
+// 	token, err := jwt.ParseWithClaims(
+// 		signedToken,
+// 		&JwtClaim{},
+// 		func(token *jwt.Token) (interface{}, error) {
+// 			return []byte(j.SecretKey), nil
+// 		},
+// 	)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	claims, ok := token.Claims.(*JwtClaim)
+// 	if !ok {
+// 		return nil, errors.New("couldn't parse claims")
+// 	}
+
+// 	if claims.StandardClaims.ExpiresAt < time.Now().Unix() {
+// 		return nil, errors.New("JWT is expired")
+// 	}
+// 	return claims, nil
+// }
+
+// func Auths() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		clintToken := c.Request.Header.Get("Authorization")
+// 		if clintToken == "" {
+// 			c.JSON(403, "no Authorization header provided")
+// 			c.Abort()
+// 			return
+// 		}
+
+// 		extractedToken := strings.Split(clintToken, "Bearer")
+
+// 		if len(extractedToken) == 2 {
+// 			clintToken = strings.TrimSpace(extractedToken[1])
+// 		} else {
+// 			c.JSON(400, "Incorrect Format of Authorization Token")
+// 			c.Abort()
+// 			return
+// 		}
+
+// 		jwtWrapper := JwtWrap{
+// 			SecretKey: "esfsdfkpskodkf24234243243",
+// 			Issued:    "admin",
+// 		}
+// 		claims, err := jwtWrapper.ValidateToken(clintToken)
+// 		if err != nil {
+// 			c.JSON(401, err.Error())
+// 			c.Abort()
+// 			return
+// 		}
+// 		c.Set("email", claims.Email)
+// 		c.Next()
+// 	}
+// }
+
+// type users struct {
+// 	ID       int    `json:"user_id"`
+// 	Email    string `json:"email"`
+// 	Password string `json:"password"`
+// }
+
+// var userss map[string]users
+
+// func getData(c *gin.Context) {
+// 	c.JSON(http.StatusOK, gin.H{"data": userss})
+// }
+
+
 package authentication
 
 import (
 	"errors"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -11,9 +130,9 @@ import (
 )
 
 type JwtWrap struct {
-	SecretKey       string //secret key to sign token .
+	SecretKey       string // Secret key to sign token
 	Issued          string
-	ExpirationHours int64 //jhow much time token valid
+	ExpirationHours int64 // How much time the token is valid
 }
 
 type JwtClaim struct {
@@ -22,14 +141,13 @@ type JwtClaim struct {
 }
 
 func (j *JwtClaim) Valid() error {
-
 	if err := j.StandardClaims.Valid(); err != nil {
 		return err
 	}
 	return nil
 }
 
-// a tokenn is generated from the email.the token is signed using a secret key the token also has an expiry time set.
+// GenerateToken generates a JWT token from the email, signed using a secret key with an expiry time.
 func (j *JwtWrap) GenerateToken(email string) (string, error) {
 	claims := &JwtClaim{
 		Email: email,
@@ -71,33 +189,49 @@ func (j *JwtWrap) ValidateToken(signedToken string) (*JwtClaim, error) {
 
 func Auths() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Get the Authorization header
 		clintToken := c.Request.Header.Get("Authorization")
 		if clintToken == "" {
-			c.JSON(403, "no Authorization header provided")
+			c.JSON(http.StatusForbidden, gin.H{"error": "No Authorization header provided"})
 			c.Abort()
 			return
 		}
 
-		extractedToken := strings.Split(clintToken, "Bearer")
-
-		if len(extractedToken) == 2 {
-			clintToken = strings.TrimSpace(extractedToken[1])
-		} else {
-			c.JSON(400, "Incorrect Format of Authorization Token")
+		// Ensure the header starts with "Bearer "
+		if !strings.HasPrefix(clintToken, "Bearer ") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization header must start with 'Bearer '"})
 			c.Abort()
 			return
+		}
+
+		// Split the header to extract the token
+		extractedToken := strings.SplitN(clintToken, "Bearer ", 2)
+		if len(extractedToken) != 2 || strings.TrimSpace(extractedToken[1]) == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Authorization token format"})
+			c.Abort()
+			return
+		}
+
+		// Extract and trim the token
+		token := strings.TrimSpace(extractedToken[1])
+
+		// Use environment variable for the secret key (better security practice)
+		secretKey := os.Getenv("JWT_SECRET")
+		if secretKey == "" {
+			secretKey = "esfsdfkpskodkf24234243243" // Fallback for development; remove in production
 		}
 
 		jwtWrapper := JwtWrap{
-			SecretKey: "esfsdfkpskodkf24234243243",
+			SecretKey: secretKey,
 			Issued:    "admin",
 		}
-		claims, err := jwtWrapper.ValidateToken(clintToken)
+		claims, err := jwtWrapper.ValidateToken(token)
 		if err != nil {
-			c.JSON(401, err.Error())
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			c.Abort()
 			return
 		}
+
 		c.Set("email", claims.Email)
 		c.Next()
 	}

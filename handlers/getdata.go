@@ -10,6 +10,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetResultHandler godoc
+// @Summary      Get analysis results for a user
+// @Description  Retrieve paginated analysis results for a specific user based on user_id
+// @Tags         file
+// @Accept       json
+// @Produce      json
+// @Param        user_id   query  string  true  "User ID to fetch results for"
+// @Param        page      query  int     false "Page number (default: 1)"
+// @Param        page_size query  int     false "Number of results per page (default: 10)"
+// @Success      200  {object}  map[string]interface{}  "Successfully retrieved results"
+// @Failure      400  {object}  map[string]interface{}  "Bad Request"
+// @Failure      401  {object}  map[string]interface{}  "Unauthorized"
+// @Failure      404  {object}  map[string]interface{}  "Not Found"
+// @Router       /getdata [get]
+// @Security     BearerAuth
 func getdata(db *sql.DB, userID string, page, pageSize int) (string, int, error) {
 	userIDInt, err := strconv.Atoi(userID)
 	if err != nil {
