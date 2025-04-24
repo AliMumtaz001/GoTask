@@ -51,14 +51,12 @@ func Upload(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	// Get the email from the context (set by Auths middleware)
 	email, exists := c.Get("email")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	// Query the employeedata table to get the user_id
 	var userID int
 	query := `SELECT id FROM employee WHERE email = $1`
 	err = db.QueryRow(query, email).Scan(&userID)

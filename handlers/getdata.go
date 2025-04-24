@@ -30,10 +30,8 @@ func getdata(db *sql.DB, userID string, page, pageSize int) (string, int, error)
 	if err != nil {
 		return "", 0, err
 	}
-	// Calculate offset for pagination
 	offset := (page - 1) * pageSize
 
-	// Query to get total count of records for the user
 	var totalRecords int
 	countQuery := `SELECT COUNT(*) FROM results WHERE user_id = $1`
 	err = db.QueryRow(countQuery, userIDInt).Scan(&totalRecords)
@@ -41,7 +39,6 @@ func getdata(db *sql.DB, userID string, page, pageSize int) (string, int, error)
 		return "", 0, err
 	}
 
-	// Query to fetch paginated results (removed ORDER BY id)
 	var results []utils.Multiples
 	query := `
         SELECT words, digits, special_char, lines, spaces, punctuation, consonants, vowels, sentences, paragraphs 
@@ -98,7 +95,6 @@ func GetResultHandler(db *sql.DB) gin.HandlerFunc {
 			return
 		}
 
-		// get page and pageSize from query parameters (default to page 1, 4 records per page)
 		pageStr := c.Query("page")
 		pageSizeStr := c.Query("page_size")
 		page, err := strconv.Atoi(pageStr)
@@ -107,8 +103,7 @@ func GetResultHandler(db *sql.DB) gin.HandlerFunc {
 		}
 		pageSize, err := strconv.Atoi(pageSizeStr)
 		if err != nil || pageSize < 1 {
-			pageSize = 10 // default is 4 records per page
-		}
+			pageSize = 10 
 
 		jsonData, totalRecords, err := getdata(db, userID, page, pageSize)
 		if err != nil {

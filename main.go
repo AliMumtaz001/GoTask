@@ -1,14 +1,12 @@
 package main
 
 import (
-	"github.com/AliMumtaz001/GoTask/authentication"
-	"github.com/AliMumtaz001/GoTask/database"
-	handlers "github.com/AliMumtaz001/GoTask/handlers"
+	"log"
 
-	_ "github.com/AliMumtaz001/GoTask/docs"
+	"github.com/AliMumtaz001/GoTask/api/config"
+	"github.com/AliMumtaz001/GoTask/api/database"
+	"github.com/AliMumtaz001/GoTask/routes"
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"     // Swagger files
-	ginSwagger "github.com/swaggo/gin-swagger" // Gin Swagger middleware
 )
 
 // @title File Analyzer APIs
@@ -29,27 +27,26 @@ import (
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
+
 func main() {
-	db := database.Connect()
-	defer db.Close()
-	r := gin.Default()
+	envConfig := config.LoadEnv()
 
-	// Swagger route (no authentication required)
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	// Public routes (no authentication)
-	r.POST("/login", authentication.Login)
-	r.POST("/signup", authentication.Signup)
-
-	// Protected routes (it need authentication)
-	protected := r.Group("/")
-	protected.Use(authentication.Auths())
-	{
-		protected.POST("/result", func(c *gin.Context) {
-			handlers.Upload(c, db)
-		})
-		protected.GET("/getdata", handlers.GetResultHandler(db))
+	port := envConfig.Port
+	if port == "" {
+		port = "8000" 
 	}
 
-	r.Run(":8000")
+
+	db := database.Connect(envConfig)
+	defer db.Close()
+
+	r := gin.Default()
+
+	routes.SetupRoutes(r, db, envConfig)
+
+	log.Printf("Server running on port %s", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }

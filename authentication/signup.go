@@ -1,112 +1,50 @@
 package authentication
 
 import (
-	"fmt"
+	"database/sql"
 	"log"
 	"net/http"
-	"strings"
 
-	"github.com/AliMumtaz001/GoTask/database"
+	"github.com/AliMumtaz001/GoTask/api/config"
+	model "github.com/AliMumtaz001/GoTask/models"
+	"github.com/AliMumtaz001/GoTask/repositories"
+	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
 )
 
-// Signup godoc
-// @Summary      Signup user
-// @Description  Authenticate user and return JWT token
-// @Tags         auth
-// @Accept       json
-// @Produce      json
-// @Param        user  body  authentication.users  true  "User Credentials"
-// @Success      200
-// @Failure      401
-// @Router       /signup [post]
-func Signup(c *gin.Context) {
-	var u users
-	err := c.BindJSON(&u)
+func Signup(c *gin.Context, db *sql.DB, envConfig config.DBConfig) {
+	var user model.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	authService := services.AuthService{
+		UserRepo: &repositories.UserRepository{DB: db},
+	}
+
+	err := authService.RegisterUser(user)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid input",
-			"email": u.Email,
-		})
+		c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Validate email
-	if u.Email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Email cannot be empty",
-			"email": u.Email,
-		})
-		return
-	}
-
-	db := database.Connect()
-	defer db.Close()
-
-	// check if email already exists
-	var existingEmail string
-	checkQuery := `SELECT email FROM employee WHERE email = $1`
-	err = db.QueryRow(checkQuery, u.Email).Scan(&existingEmail)
-	if err == nil {
-		// if email already exists
-		c.JSON(http.StatusConflict, gin.H{
-			"error": "User already exists with this email",
-			"email": u.Email,
-		})
-		return
-	} else if err.Error() != "sql: no rows in result set" {
-		// Handle other database errors
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Database error",
-			"details": err.Error(),
-			"email":   u.Email,
-		})
-		fmt.Println("Database error:", err)
-		return
-	}
-
-	// iif email doesn't exist, proceed with insertion
-	query := `INSERT INTO employee (email, password) VALUES ($1, $2) RETURNING email`
-	err = db.QueryRow(query, u.Email, u.Password).Scan(&u.Email)
-	if err != nil {
-		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
-			c.JSON(http.StatusConflict, gin.H{
-				"error": "User already exists with this email",
-				"email": u.Email,
-			})
-		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"error":   "Failed to create user",
-				"details": err.Error(),
-				"email":   u.Email,
-			})
-		}
-		fmt.Println("Database error:", err)
-		return
-	}
-
-	// generate JWT token
-	jwtWrapper := JwtWrap{
+	jwtWrapper := services.JwtWrap{
 		SecretKey:       "esfsdfkpskodkf24234243243",
 		Issued:          "admin",
 		ExpirationHours: 24,
 	}
-	
-	signedToken, jwtErr := jwtWrapper.GenerateToken(u.Email)
+
+	signedToken, jwtErr := jwtWrapper.GenerateToken(user.Email)
 	if jwtErr != nil {
 		log.Println("JWT error:", jwtErr)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to generate token",
-			"email": u.Email,
-		})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	// return success response
 	c.JSON(http.StatusOK, gin.H{
 		"error":   false,
-		"message": "Successfully Signed Up",
-		"email":   u.Email,
+		"message": "Successfully signed up",
 		"token":   signedToken,
 	})
 }
