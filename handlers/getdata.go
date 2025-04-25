@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"strconv"
 
-	"github.com/AliMumtaz001/GoTask/utils"
+	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,69 +24,7 @@ import (
 // @Failure      404  {object}  map[string]interface{}  "Not Found"
 // @Router       /getdata [get]
 // @Security     BearerAuth
-func getdata(db *sql.DB, userID string, page, pageSize int) (string, int, error) {
-	userIDInt, err := strconv.Atoi(userID)
-	if err != nil {
-		return "", 0, err
-	}
-	offset := (page - 1) * pageSize
-
-	var totalRecords int
-	countQuery := `SELECT COUNT(*) FROM results WHERE user_id = $1`
-	err = db.QueryRow(countQuery, userIDInt).Scan(&totalRecords)
-	if err != nil {
-		return "", 0, err
-	}
-
-	var results []utils.Multiples
-	query := `
-        SELECT words, digits, special_char, lines, spaces, punctuation, consonants, vowels, sentences, paragraphs 
-        FROM results 
-        WHERE user_id = $1 
-        LIMIT $2 OFFSET $3`
-	rows, err := db.Query(query, userIDInt, pageSize, offset)
-	if err != nil {
-		return "", 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var result utils.Multiples
-		err := rows.Scan(
-			&result.Words,
-			&result.Digits,
-			&result.SpecialChar,
-			&result.Lines,
-			&result.Spaces,
-			&result.Punctuation,
-			&result.Consonants,
-			&result.Vowels,
-			&result.Sentences,
-			&result.Paragraphs,
-		)
-		if err != nil {
-			return "", 0, err
-		}
-		results = append(results, result)
-	}
-
-	if err = rows.Err(); err != nil {
-		return "", 0, err
-	}
-
-	if len(results) == 0 {
-		return "", totalRecords, nil
-	}
-
-	jsonData, err := json.Marshal(results)
-	if err != nil {
-		return "", 0, err
-	}
-
-	return string(jsonData), totalRecords, nil
-}
-
-func GetResultHandler(db *sql.DB) gin.HandlerFunc {
+func GetResultHandler(service *services.ResultsService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID := c.Query("user_id")
 		if userID == "" {
@@ -103,9 +40,10 @@ func GetResultHandler(db *sql.DB) gin.HandlerFunc {
 		}
 		pageSize, err := strconv.Atoi(pageSizeStr)
 		if err != nil || pageSize < 1 {
-			pageSize = 10 
+			pageSize = 10
+		}
 
-		jsonData, totalRecords, err := getdata(db, userID, page, pageSize)
+		jsonData, totalRecords, err := service.GetPaginatedResults(userID, page, pageSize)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user_id or server error", "details": err.Error()})
 			return

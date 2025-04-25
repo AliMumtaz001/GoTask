@@ -12,6 +12,7 @@ type DBConfig struct {
     User     string
     Password string
     DBName   string
+    AppPort  string // Add AppPort for the application server
 }
 
 func LoadEnv() DBConfig {
@@ -28,6 +29,7 @@ func LoadEnv() DBConfig {
         User:     os.Getenv("DB_USER"),
         Password: os.Getenv("DB_PASSWORD"),
         DBName:   os.Getenv("DB_NAME"),
+        AppPort:  os.Getenv("PORT"), // Load the application port
     }
 
     // Validate that all required environment variables are set

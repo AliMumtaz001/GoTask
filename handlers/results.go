@@ -6,9 +6,10 @@ import (
 	"os"
 	"path/filepath"
 
-	resultprocess "github.com/AliMumtaz001/GoTask/result"
+	"github.com/AliMumtaz001/GoTask/repositories"
+	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/AliMumtaz001/GoTask/utils"
-    
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -68,15 +69,21 @@ func Upload(c *gin.Context, db *sql.DB) {
 	data := string(content)
 	res := utils.CombineFunc(data)
 
+	// Initialize the service with the repository
+	repo := &repositories.ResultsRepository{DB: db}
+	service := services.NewResultsService(repo)
+
+	// Save the result using the service
+	err = service.SaveResult(res, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save result to database", "details": err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  http.StatusOK,
 		"message": "File uploaded and analyzed successfully",
 		"file":    file.Filename,
 		"result":  res,
 	})
-
-	err = resultprocess.SaveResult(db, res, userID) // Pass userID
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to save result to database", "details": err.Error()})
-	}
 }

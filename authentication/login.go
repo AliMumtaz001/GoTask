@@ -12,13 +12,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// func Login(c *gin.Context, db *sql.DB, envConfig config.DBConfig) {
-//     authService := services.AuthService{
-//         UserRepo: &repositories.UserRepository{DB: db},
-//     }
-//     // Rest of the code remains the same...
-// }
-
+// Login godoc
+// @Summary      Login user
+// @Description  Authenticate user and return JWT token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        user  body  authentication.users  true  "User Credentials"
+// @Success      200
+// @Failure      401
+// @Router       /login [post]
 func Login(c *gin.Context, db *sql.DB, envConfig config.DBConfig) {
 	var credentials model.UserCredentials
 	if err := c.ShouldBindJSON(&credentials); err != nil {
