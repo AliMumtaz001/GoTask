@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/AliMumtaz001/GoTask/repositories"
-	"github.com/AliMumtaz001/GoTask/utils"
+	"github.com/AliMumtaz001/GoTask/models"
 )
 
 type ResultsService struct {
@@ -47,7 +47,7 @@ func (service *ResultsService) GetPaginatedResults(userID string, page, pageSize
 	return string(jsonData), totalRecords, nil
 }
 
-func (service *ResultsService) SaveResult(result utils.Multiples, userID int) error {
+func (service *ResultsService) SaveResult(result model.Multiples, userID int) error {
 	if userID <= 0 {
 		return errors.New("invalid user ID")
 	}

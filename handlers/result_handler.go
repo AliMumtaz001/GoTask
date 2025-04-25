@@ -1,17 +1,17 @@
 package handlers
 
 import (
-    "net/http"
-    "strconv"
+	"net/http"
+	"strconv"
 
-    "github.com/AliMumtaz001/GoTask/services"
-    "github.com/AliMumtaz001/GoTask/utils"
-    "github.com/gin-gonic/gin"
+	model "github.com/AliMumtaz001/GoTask/models"
+	"github.com/AliMumtaz001/GoTask/services"
+	"github.com/gin-gonic/gin"
 )
 
 func SaveResultHandler(service *services.ResultsService) gin.HandlerFunc {
     return func(c *gin.Context) {
-        var result utils.Multiples
+        var result model.Multiples
         if err := c.ShouldBindJSON(&result); err != nil {
             c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input", "details": err.Error()})
             return

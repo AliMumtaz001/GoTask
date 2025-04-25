@@ -1,7 +1,11 @@
 package utils
 
-func CombineFunc(s string) Multiples {
-	m := Multiples{}
+import (
+	model "github.com/AliMumtaz001/GoTask/models"
+)
+
+func CombineFunc(s string) model.Multiples {
+	m := model.Multiples{}
 	for i := 0; i < len(s); i++ {
 		if s[i] == '\n' || (s[i] == '.' && i+1 < len(s) && s[i+1] == '\n') {
 			m.Paragraphs++
@@ -13,7 +17,7 @@ func CombineFunc(s string) Multiples {
 			m.Spaces++
 		} else if s[i] == '.' {
 			m.Lines++
-			m.Sentences++ 
+			m.Sentences++
 		} else if s[i] == 'b' || s[i] == 'c' || s[i] == 'd' || s[i] == 'f' || s[i] == 'g' ||
 			s[i] == 'h' || s[i] == 'j' || s[i] == 'k' || s[i] == 'l' || s[i] == 'm' ||
 			s[i] == 'n' || s[i] == 'p' || s[i] == 'q' || s[i] == 'r' || s[i] == 's' ||

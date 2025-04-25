@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/AliMumtaz001/GoTask/utils"
+	model "github.com/AliMumtaz001/GoTask/models"
 )
 
 type ResultsRepository struct {
@@ -23,7 +23,7 @@ func (repo *ResultsRepository) GetTotalRecords(userID int) (int, error) {
 }
 
 // GetResults retrieves paginated results for a user.
-func (repo *ResultsRepository) GetResults(userID, pageSize, offset int) ([]utils.Multiples, error) {
+func (repo *ResultsRepository) GetResults(userID, pageSize, offset int) ([]model.Multiples, error) {
 	query := `
         SELECT words, digits, special_char, lines, spaces, punctuation, consonants, vowels, sentences, paragraphs 
         FROM results 
@@ -35,9 +35,9 @@ func (repo *ResultsRepository) GetResults(userID, pageSize, offset int) ([]utils
 	}
 	defer rows.Close()
 
-	var results []utils.Multiples
+	var results []model.Multiples
 	for rows.Next() {
-		var result utils.Multiples
+		var result model.Multiples
 		err := rows.Scan(
 			&result.Words,
 			&result.Digits,
@@ -64,7 +64,7 @@ func (repo *ResultsRepository) GetResults(userID, pageSize, offset int) ([]utils
 }
 
 // SaveResult inserts analysis results into the database.
-func (repo *ResultsRepository) SaveResult(result utils.Multiples, userID int) error {
+func (repo *ResultsRepository) SaveResult(result model.Multiples, userID int) error {
 	query := `
         INSERT INTO results 
         (words, digits, special_char, lines, spaces, consonants, vowels, sentences, paragraphs, punctuation, user_id)
