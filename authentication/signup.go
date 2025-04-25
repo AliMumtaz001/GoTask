@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/AliMumtaz001/GoTask/api/config"
 	model "github.com/AliMumtaz001/GoTask/models"
 	"github.com/AliMumtaz001/GoTask/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
@@ -22,7 +21,7 @@ import (
 // @Success      200
 // @Failure      401
 // @Router       /signup [post]
-func Signup(c *gin.Context, db *sql.DB, envConfig config.DBConfig) {
+func Signup(c *gin.Context, db *sql.DB, envConfig model.DBConfig) {
 	var user model.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})

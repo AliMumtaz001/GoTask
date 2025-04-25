@@ -4,12 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-
-	"github.com/AliMumtaz001/GoTask/api/config"
+	"github.com/AliMumtaz001/GoTask/models"
 	_ "github.com/lib/pq"
 )
 
-func Connect(dbConfig config.DBConfig) *sql.DB {
+func Connect(dbConfig model.DBConfig) *sql.DB {
 	// Create the connection string
 	psqlconn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",

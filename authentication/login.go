@@ -4,8 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
-	
-	"github.com/AliMumtaz001/GoTask/api/config"
+
 	model "github.com/AliMumtaz001/GoTask/models"
 	"github.com/AliMumtaz001/GoTask/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
@@ -22,7 +21,7 @@ import (
 // @Success      200
 // @Failure      401
 // @Router       /login [post]
-func Login(c *gin.Context, db *sql.DB, envConfig config.DBConfig) {
+func Login(c *gin.Context, db *sql.DB, envConfig model.DBConfig) {
 	var credentials model.UserCredentials
 	if err := c.ShouldBindJSON(&credentials); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})

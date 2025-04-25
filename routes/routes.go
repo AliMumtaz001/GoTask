@@ -3,10 +3,10 @@ package routes
 import (
 	"database/sql"
 
-	"github.com/AliMumtaz001/GoTask/api/config"
 	"github.com/AliMumtaz001/GoTask/authentication"
 	_ "github.com/AliMumtaz001/GoTask/docs" // Import generated Swagger docs
 	"github.com/AliMumtaz001/GoTask/handlers"
+	model "github.com/AliMumtaz001/GoTask/models"
 	"github.com/AliMumtaz001/GoTask/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
@@ -14,7 +14,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger" // Gin Swagger middleware
 )
 
-func SetupRoutes(r *gin.Engine, db *sql.DB, envConfig config.DBConfig) {
+func SetupRoutes(r *gin.Engine, db *sql.DB, envConfig model.DBConfig) {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swagFiles.Handler))
 
 	// Public routes (no authentication)
