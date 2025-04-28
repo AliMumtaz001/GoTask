@@ -3,11 +3,11 @@ package routes
 import (
 	"database/sql"
 
+	"github.com/AliMumtaz001/GoTask/api/repositories"
 	"github.com/AliMumtaz001/GoTask/authentication"
 	_ "github.com/AliMumtaz001/GoTask/docs" // Import generated Swagger docs
 	"github.com/AliMumtaz001/GoTask/handlers"
 	model "github.com/AliMumtaz001/GoTask/models"
-	"github.com/AliMumtaz001/GoTask/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
 	swagFiles "github.com/swaggo/files"        // Correct alias for Swagger files
@@ -17,7 +17,6 @@ import (
 func SetupRoutes(r *gin.Engine, db *sql.DB, envConfig model.DBConfig) {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swagFiles.Handler))
 
-	// Public routes (no authentication)
 	r.POST("/login", func(c *gin.Context) {
 		authentication.Login(c, db, envConfig)
 	})
@@ -25,7 +24,7 @@ func SetupRoutes(r *gin.Engine, db *sql.DB, envConfig model.DBConfig) {
 		authentication.Signup(c, db, envConfig)
 	})
 
-	// Protected routes (require authentication)
+	// protected routes (require authentication)
 	protected := r.Group("/")
 	protected.Use(authentication.Auths())
 	{

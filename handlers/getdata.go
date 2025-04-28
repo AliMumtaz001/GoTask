@@ -18,10 +18,10 @@ import (
 // @Param        user_id   query  string  true  "User ID to fetch results for"
 // @Param        page      query  int     false "Page number (default: 1)"
 // @Param        page_size query  int     false "Number of results per page (default: 10)"
-// @Success      200  {object}  map[string]interface{}  "Successfully retrieved results"
-// @Failure      400  {object}  map[string]interface{}  "Bad Request"
-// @Failure      401  {object}  map[string]interface{}  "Unauthorized"
-// @Failure      404  {object}  map[string]interface{}  "Not Found"
+// @Success      200  "Successfully retrieved results"
+// @Failure      400    "Bad Request"
+// @Failure      401  "Unauthorized"
+// @Failure      404    "Not Found"
 // @Router       /getdata [get]
 // @Security     BearerAuth
 func GetResultHandler(service *services.ResultsService) gin.HandlerFunc {

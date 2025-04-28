@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/AliMumtaz001/GoTask/api/repositories"
 	model "github.com/AliMumtaz001/GoTask/models"
-	"github.com/AliMumtaz001/GoTask/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
 )

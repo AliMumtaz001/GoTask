@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	model "github.com/AliMumtaz001/GoTask/models"
-	"github.com/AliMumtaz001/GoTask/repositories"
+	"github.com/AliMumtaz001/GoTask/api/repositories"
 	"github.com/AliMumtaz001/GoTask/services"
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +38,7 @@ func Login(c *gin.Context, db *sql.DB, envConfig model.DBConfig) {
 		return
 	}
 
-	// Generate JWT toke
+	// generate JWT toke
 	jwtWrapper := services.JwtWrap{
 		SecretKey:       "esfsdfkpskodkf24234243243",
 		Issued:          "admin",

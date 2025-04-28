@@ -28,3 +28,4 @@ func (repo *UserRepository) CreateUser(user model.User) error {
 	_, err := repo.DB.Exec(query, user.Email, user.Password)
 	return err
 }
+

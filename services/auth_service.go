@@ -3,15 +3,15 @@ package services
 import (
 	"errors"
 
-	"github.com/AliMumtaz001/GoTask/repositories"
-	"github.com/AliMumtaz001/GoTask/models"
+	"github.com/AliMumtaz001/GoTask/api/repositories"
+	model "github.com/AliMumtaz001/GoTask/models"
 )
 
 type AuthService struct {
 	UserRepo *repositories.UserRepository
 }
 
-// AuthenticateUser validates user credentials.
+// AuthenticateUser validate user cred.
 func (service *AuthService) AuthenticateUser(credentials model.UserCredentials) (model.User, error) {
 	user, err := service.UserRepo.GetUserByEmail(credentials.Email)
 	if err != nil {

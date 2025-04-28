@@ -91,3 +91,16 @@ func (repo *ResultsRepository) SaveResult(result model.Multiples, userID int) er
 	log.Println("Result saved successfully.")
 	return nil
 }
+
+func (repo *ResultsRepository) GetUserIDByEmail(email string) (int, error) {
+    var userID int
+    query := `SELECT id FROM employee WHERE email = $1`
+    err := repo.DB.QueryRow(query, email).Scan(&userID)
+    return userID, err
+}
+
+func (repo *ResultsRepository) SaveUploadedResult(result string, userID int) error {
+    query := `INSERT INTO results (user_id, result) VALUES ($1, $2)`
+    _, err := repo.DB.Exec(query, userID, result)
+    return err
+}

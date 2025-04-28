@@ -35,7 +35,7 @@ func (j *JwtService) GenerateToken(email string) (string, error) {
 	return signedToken, nil
 }
 
-// ValidateToken validates a JWT token and returns the claims if valid.
+// ValidateToken validates JWT token and returns the claims if valid.
 func (j *JwtService) ValidateToken(signedToken string) (*JwtClaim, error) {
 	token, err := jwt.ParseWithClaims(
 		signedToken,

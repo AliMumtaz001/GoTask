@@ -1,4 +1,4 @@
-GoTask
+# GoTask
 
 GoTask is a Go-based web application designed for analyzing text files and storing analysis results in a database. It follows a three-tier architecture, separating the presentation (HTTP handlers), business logic (services), and data access (repositories) layers. The application allows users to upload files, analyze their content for metrics such as word count, digit count, special characters, and more, and retrieve paginated results. Built with the Gin web framework, GoTask ensures scalability and maintainability.
 Features
@@ -10,30 +10,37 @@ Database Integration: Store and retrieve analysis results using a SQL database.
 Authentication: Secure endpoints with Bearer token authentication.
 RESTful API: Expose endpoints for file upload and result retrieval using the Gin framework.
 
-Prerequisites
-
+# Prerequisites
+```json
 Go (version 1.16 or later)
 A SQL database (e.g., PostgreSQL, MySQL)
 Git
 Gin Gonic for HTTP routing
 PostgreSQL driver or equivalent for your database
+```
 
-Installation
+# Installation
 
 Clone the Repository:
+```json
 git clone https://github.com/AliMumtaz001/GoTask.git
+```
+```json
 cd GoTask
+```
 
 
 Install Dependencies:Ensure you have Go modules enabled, then run:
+```json
 go mod tidy
+```
 
 
-Set Up the Database:
+# Set Up the Database:
 
 Create a database (e.g., in PostgreSQL):CREATE DATABASE gotask;
 
-
+```json
 Create the results table:CREATE TABLE results (
     id SERIAL PRIMARY KEY,
     words INT,
@@ -49,13 +56,14 @@ Create the results table:CREATE TABLE results (
     user_id INT,
     FOREIGN KEY (user_id) REFERENCES employee(id)
 );
+```
 
-
+```json
 Create the employee table (for user authentication):CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL
 );
-
+```
 
 
 
@@ -70,14 +78,15 @@ go run main.go
 The server will start on http://localhost:8080 (or the port specified in .env).
 
 
-Usage
+# Usage
 
 Upload a File:Use the /result endpoint to upload a text file for analysis. Ensure you include a valid Bearer token for authentication.
 curl -X POST http://localhost:8080/result \
   -H "Authorization: Bearer your_token" \
   -F "file=@/path/to/your/file.txt"
 
-Response:
+# Response:
+```json
 {
     "status": 200,
     "message": "File uploaded and analyzed successfully",
@@ -95,7 +104,9 @@ Response:
         "Punctuation": 15
     }
 }
+```
 
 
-Retrieve Paginated Results:Use the service layer’s GetPaginatedResults function to fetch analysis results for a user with pagination. This is typically accessed via an API endpoint (not shown in the provided code but can be implemented).
+# Retrieve Paginated Results:
+Use the service layer’s GetPaginatedResults function to fetch analysis results for a user with pagination. This is typically accessed via an API endpoint (not shown in the provided code but can be implemented).
 
